@@ -1,7 +1,6 @@
 
 package paint.controller;
 
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -241,7 +240,7 @@ public class FXMLDocumentController implements Initializable, DrawingEngine {
     
     public void copyFunction() throws CloneNotSupportedException{
         int index = ShapeList.getSelectionModel().getSelectedIndex();
-        Shape temp = shapeList.get(index).cloneShape();
+        Shape temp = shapeList.get(index).cloneShape();  //Prototype DP
         if(temp.equals(null)){System.out.println("Error cloning failed!");}
         else{
             shapeList.add(temp);
@@ -272,7 +271,7 @@ public class FXMLDocumentController implements Initializable, DrawingEngine {
         {Message.setText("Don't be in a hurry! Choose a shape first :'D");return;}
         addShape(sh);
         sh.draw(CanvasBox);
-        
+       
     }
     
     
@@ -291,7 +290,7 @@ public class FXMLDocumentController implements Initializable, DrawingEngine {
     public ArrayList<Shape> cloneList(ArrayList<Shape> l) throws CloneNotSupportedException{
         ArrayList<Shape> temp = new ArrayList<Shape>();
         for(int i=0;i<l.size();i++){
-            temp.add(l.get(i).cloneShape());
+            temp.add(l.get(i).cloneShape()); //what does this do ???
         }
         return temp;
     }
@@ -378,7 +377,7 @@ public class FXMLDocumentController implements Initializable, DrawingEngine {
     }
 
     @Override
-    public void save(String path) {
+    public void save(String path) { //fxml uses savetoxml class to save to xml
         if(path.substring(path.length()-4).equals(".xml")){
             SaveToXML x = new SaveToXML(path,shapeList);
             if(x.checkSuccess()){Message.setText("File Saved Successfully");}
