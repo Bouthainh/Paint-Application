@@ -1,13 +1,16 @@
 
 package paint.model;
 
+import java.util.HashMap;
+
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import paint.controller.iShapeFactory;
 
 
-public class Rectangle extends Shape{
+public class Rectangle extends Shape implements iShapeFactory{
     private double width;
     private double height;
 
@@ -59,6 +62,18 @@ public class Rectangle extends Shape{
         gc.strokeRect(super.getTopLeft().getX(), super.getTopLeft().getY(), width, height);
         gc.setFill(super.getFillColor());
         gc.fillRect(super.getTopLeft().getX(), super.getTopLeft().getY(), width, height);
+    }
+
+    @Override
+    public Shape createShape(Point2D start, Point2D end, Color color) {
+        return new Rectangle(start, end, color);
+    }
+
+    @Override
+    public Shape createShape(HashMap<String, Double> m) {
+        Shape rectangle = new Rectangle();
+        rectangle.setProperties(m);
+        return rectangle;
     }
     
 }

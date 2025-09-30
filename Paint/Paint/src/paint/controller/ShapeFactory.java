@@ -14,12 +14,12 @@ public class ShapeFactory  {
 private static final Map<String, iShapeFactory> factories = new HashMap<>();
 
     static {
-        factories.put("Ellipse", new EllipseFactory());
-        factories.put("Rectangle", new RectangleFactory());
-        factories.put("Line", new LineFactory());
-        factories.put("Triangle", new TriangleFactory());
-        factories.put("Square", new SquareFactory());
-        factories.put("Circle", new CircleFactory());   
+        factories.put("Ellipse", new Ellipse());
+        factories.put("Rectangle", new Rectangle());
+        factories.put("Line", new Line());
+        factories.put("Triangle", new Triangle());
+        factories.put("Square", new Square());
+        factories.put("Circle", new Circle());   
     }
 
     public static Shape createShape(String type, Point2D start, Point2D end, Color color) {
