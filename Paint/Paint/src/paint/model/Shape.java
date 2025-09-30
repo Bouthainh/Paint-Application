@@ -155,10 +155,10 @@ public abstract class Shape implements iShape, java.lang.Cloneable{
 
     @Override
     public Shape clone() throws CloneNotSupportedException{
-        return cloneShape();
+        return cloneShape(); //not used !!!
     }
     
-    public Shape cloneShape() throws CloneNotSupportedException {
+    public Shape cloneShape() throws CloneNotSupportedException { //Prototype DP, this the used one 
         Shape temp = null;
         temp = (Shape) super.clone();
         return temp;

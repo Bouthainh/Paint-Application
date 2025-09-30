@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
@@ -18,10 +19,10 @@ import paint.model.Shape;
 public class SaveToXML {
     private String path;
     private Map<String, Double> m;
-    private ArrayList<Shape> l;
+    private List<Shape> l; 
     private boolean success=false;
     
-    public SaveToXML(String path, ArrayList<Shape> l){
+    public SaveToXML(String path, List<Shape> l){
         this.path = path;
         this.l = l;
         try{doTheJob();}catch(Exception e){System.out.println("Failed to save xml");}

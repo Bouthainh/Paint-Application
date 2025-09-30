@@ -1,13 +1,15 @@
 
 package paint.model;
 
+import java.util.HashMap;
+
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import paint.controller.iShapeFactory;
 
-
-public class Line extends Shape{
+public class Line extends Shape implements iShapeFactory{
     
     private double length;
     
@@ -43,6 +45,18 @@ public class Line extends Shape{
         gc.strokeLine(x1,y1,x2,y2);
         
         
+    }
+
+   @Override
+    public Shape createShape(Point2D start, Point2D end, Color color) {
+        return new Line(start, end, color);
+    }
+
+    @Override
+    public Shape createShape(HashMap<String, Double> m) {
+        Shape line = new Line();
+        line.setProperties(m);
+        return line;
     }
     
 }

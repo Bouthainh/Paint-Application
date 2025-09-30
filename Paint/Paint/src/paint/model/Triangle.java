@@ -1,13 +1,16 @@
 
 package paint.model;
 
+import java.util.HashMap;
+
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import paint.controller.iShapeFactory;
 
 
-public class Triangle extends Shape{
+public class Triangle extends Shape implements iShapeFactory{
     private Point2D thirdPoint;
     
     public Triangle(Point2D startPos, Point2D endPos, Color strockColor) {
@@ -59,6 +62,18 @@ public class Triangle extends Shape{
         gc.strokePolygon(new double[]{x1,x2,x3}, new double[]{y1,y2,y3}, 3);
         gc.setFill(super.getFillColor());
         gc.fillPolygon(new double[]{x1,x2,x3}, new double[]{y1,y2,y3}, 3);
+    }
+
+     @Override
+    public Shape createShape(Point2D start, Point2D end, Color color) {
+        return new Triangle(start, end, color);
+    }
+
+    @Override
+    public Shape createShape(HashMap<String, Double> m) {
+        Shape triangle = new Triangle();
+        triangle.setProperties(m);
+        return triangle;
     }
     
     
