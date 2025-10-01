@@ -8,9 +8,10 @@ import javafx.scene.paint.Color;
 import paint.model.*;
 
 
-//Factory DP
+//Factory DP: Class to manage shape creation using registered shape factories 
 public class ShapeFactory  {
     
+// Registry of shape factories 
 private static final Map<String, iShapeFactory> factories = new HashMap<>();
 
     static {
@@ -22,6 +23,9 @@ private static final Map<String, iShapeFactory> factories = new HashMap<>();
         factories.put("Circle", new Circle());   
     }
 
+    // Factory methods to call the appropriate shape factory based on type returend from controller
+   //call the createShape method from the appropriate shape class
+   
     public static Shape createShape(String type, Point2D start, Point2D end, Color color) {
         iShapeFactory factory = factories.get(type);
         return factory != null ? factory.createShape(start, end, color) : null;

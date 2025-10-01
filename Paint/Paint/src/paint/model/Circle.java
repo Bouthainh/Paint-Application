@@ -22,11 +22,15 @@ public class Circle extends Ellipse {
         
     }
     
+    //GUI Creation:
+    //override the createShape method to create a Circle  
     @Override
     public Shape createShape(Point2D start, Point2D end, Color color) {
         return new Circle(start, end, color);
     }
 
+    //Data file Creation:
+    //override the createShape method to create a Circle
     @Override
     public Shape createShape(HashMap<String, Double> m) {
         Shape Circle = new Circle();

@@ -22,7 +22,9 @@ public class Square extends Rectangle{
         
     }
 
-        @Override
+    //GUI Creation:
+    //override the createShape method to create a Square
+    @Override
     public Shape createShape(Point2D start, Point2D end, Color color) {
         // enforce square by taking min(width, height)
         double side = Math.min(
@@ -32,10 +34,11 @@ public class Square extends Rectangle{
 
         // adjust end point so width=height
         Point2D adjustedEnd = new Point2D(start.getX() + side, start.getY() + side);
-
         return new Square(start, adjustedEnd, color); 
     }
 
+    //Data file Creation:
+    //override the createShape method to create a Square
     @Override
     public Shape createShape(HashMap<String, Double> m) {
         Shape square = new Square();

@@ -63,11 +63,15 @@ public class Triangle extends Shape {
         gc.fillPolygon(new double[]{x1,x2,x3}, new double[]{y1,y2,y3}, 3);
     }
 
+    //GUI Creation:
+    //override the createShape method to create a Triangle
      @Override
     public Shape createShape(Point2D start, Point2D end, Color color) {
         return new Triangle(start, end, color);
     }
 
+    //Data file Creation:
+    //override the createShape method to create a Triangle
     @Override
     public Shape createShape(HashMap<String, Double> m) {
         Shape triangle = new Triangle();

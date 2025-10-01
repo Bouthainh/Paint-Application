@@ -63,11 +63,15 @@ public class Ellipse extends Shape  {
         gc.fillOval(super.getTopLeft().getX(), super.getTopLeft().getY(), hRadius*2, vRadius*2);
     }
     
+    //GUI Creation:
+    //override the createShape method to create a Ellipse
     @Override
         public Shape createShape(Point2D start, Point2D end, Color color) {
         return new Ellipse(start, end, color);
     }
 
+    //Data file Creation:
+    //override the createShape method to create a Ellipse
     @Override
     public Shape createShape(HashMap<String, Double> m) {
         Shape ellipse = new Ellipse();

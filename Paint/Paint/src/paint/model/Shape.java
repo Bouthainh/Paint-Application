@@ -8,6 +8,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.*;
 
 
+//Fatory Dp: super class that implements iShapeFactory interface to provide overloaded methods for creating shapes
 public abstract class Shape implements iShape, java.lang.Cloneable , paint.controller.iShapeFactory{
     
     private Point2D startPosition;
@@ -18,7 +19,6 @@ public abstract class Shape implements iShape, java.lang.Cloneable , paint.contr
     private Map properties = new HashMap<String,Double>();
     
     public Shape(){
-        //Variables will be set by the Properties map.
     }
     
     public Shape(Point2D startPos, Point2D endPos , Color strockColor){
@@ -147,10 +147,10 @@ public abstract class Shape implements iShape, java.lang.Cloneable , paint.contr
 
     @Override
     public Shape clone() throws CloneNotSupportedException{
-        return cloneShape(); //not used !!!
+        return cloneShape(); 
     }
     
-    public Shape cloneShape() throws CloneNotSupportedException { //Prototype DP, this the used one 
+    public Shape cloneShape() throws CloneNotSupportedException {  
         Shape temp = null;
         temp = (Shape) super.clone();
         return temp;

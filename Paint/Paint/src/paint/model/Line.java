@@ -46,11 +46,15 @@ public class Line extends Shape  {
         
     }
 
+    //GUI Creation:
+   //override the createShape method to create a Line
    @Override
     public Shape createShape(Point2D start, Point2D end, Color color) {
         return new Line(start, end, color);
     }
 
+    //Data file Creation:
+    //override the createShape method to create a Line
     @Override
     public Shape createShape(HashMap<String, Double> m) {
         Shape line = new Line();

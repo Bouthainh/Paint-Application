@@ -63,11 +63,15 @@ public class Rectangle extends Shape  {
         gc.fillRect(super.getTopLeft().getX(), super.getTopLeft().getY(), width, height);
     }
 
+    //GUI Creation:
+    //override the createShape method to create a Rectangle
     @Override
     public Shape createShape(Point2D start, Point2D end, Color color) {
         return new Rectangle(start, end, color);
     }
 
+    //Data file Creation:
+    //override the createShape method to create a Rectangle
     @Override
     public Shape createShape(HashMap<String, Double> m) {
         Shape rectangle = new Rectangle();
