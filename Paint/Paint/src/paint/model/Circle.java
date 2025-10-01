@@ -2,7 +2,6 @@
 package paint.model;
 
 import java.util.HashMap;
-
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 

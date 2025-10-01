@@ -7,10 +7,9 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import paint.controller.iShapeFactory;
 
 
-public class Rectangle extends Shape implements iShapeFactory{
+public class Rectangle extends Shape  {
     private double width;
     private double height;
 

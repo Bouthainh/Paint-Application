@@ -3,13 +3,12 @@ package paint.model;
 
 import java.util.HashMap;
 import java.util.Map;
-import javafx.animation.Interpolatable;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.*;
 
 
-public abstract class Shape implements iShape, java.lang.Cloneable{
+public abstract class Shape implements iShape, java.lang.Cloneable , paint.controller.iShapeFactory{
     
     private Point2D startPosition;
     private Point2D endPosition;
@@ -29,14 +28,7 @@ public abstract class Shape implements iShape, java.lang.Cloneable{
         this.fillColor = Color.TRANSPARENT;
         this.topLeft = calculateTopLeft();
     }
-    
-    /*public Shape(Point2D startPos, Point2D endPos, Color strockColor, Color fillColor){
-        this.color = strockColor;
-        this.startPosition = startPos;
-        this.endPosition = endPos;
-        this.fillColor = fillColor;
-    }*/
-    
+      
     @Override
     public void setPosition(Point2D position) {
         this.startPosition = position;

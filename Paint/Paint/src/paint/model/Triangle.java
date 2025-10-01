@@ -7,10 +7,9 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import paint.controller.iShapeFactory;
 
 
-public class Triangle extends Shape implements iShapeFactory{
+public class Triangle extends Shape {
     private Point2D thirdPoint;
     
     public Triangle(Point2D startPos, Point2D endPos, Color strockColor) {

@@ -7,10 +7,9 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import paint.controller.iShapeFactory;
 
 
-public class Ellipse extends Shape implements iShapeFactory{
+public class Ellipse extends Shape  {
     private double hRadius;
     private double vRadius;
 
