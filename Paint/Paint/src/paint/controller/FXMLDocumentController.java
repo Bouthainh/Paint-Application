@@ -23,6 +23,8 @@ import javafx.scene.paint.Color;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 import paint.model.*;
+import javafx.scene.web.WebView; //Adapter: import WebView bridge
+
 
 public class FXMLDocumentController implements Initializable, DrawingEngine {
 
@@ -48,13 +50,27 @@ public class FXMLDocumentController implements Initializable, DrawingEngine {
     @FXML private Button CopyBtn;
     @FXML private Label Message;
     @FXML private ListView ShapeList;
+    //Group/Ungroup features Buttons
+    @FXML private Button GroupBtn;
+    @FXML private Button UngroupBtn;
+    // Pen Tool FXML Components => UI elements
+    @FXML private MenuButton PenMenu;
+    @FXML private Slider PenSizeSlider;
+    @FXML private Slider EraserSizeSlider;
+    @FXML private Button UsePenBtn;
+    @FXML private Button UseEraserBtn;
+    @FXML private WebView PenWebView; //the WebView that hosts the pen tool implemented in JS
 
-    /*** CLASS VARIABLES ***/
+    //Pen Tool Variables
+    private boolean penMode = false;
+    private iPenDrawing pen; //interface reference for Pen, loose coupling
+
+    //CLASS VARIABLES 
     private Point2D start;
     private Point2D end;
     private ShapeManager manager = ShapeManager.getInstance();
     private CanvasManager canvasManager = CanvasManager.getInstance();
-
+    // Action flags
     private boolean move = false;
     private boolean copy = false;
     private boolean resize = false;
@@ -66,16 +82,26 @@ public class FXMLDocumentController implements Initializable, DrawingEngine {
     private Stack<ArrayList<Shape>> primary = new Stack<>();
     private Stack<ArrayList<Shape>> secondary = new Stack<>();
 
-    @FXML
-    private void handleButtonAction(ActionEvent event) throws CloneNotSupportedException {
-        if(event.getSource() == StartBtn){
+
+    // **Helper Methods for Composite Pattern**
+      private boolean isShapeGroup(Shape shape) {
+          return shape instanceof ShapeGroup;
+     }
+
+     private ShapeGroup getShapeGroup(Shape shape) {
+         return (ShapeGroup) shape;
+      }
+
+     @FXML
+      private void handleButtonAction(ActionEvent event) throws CloneNotSupportedException {
+           if(event.getSource() == StartBtn){
             Before.setVisible(false);
             After.setVisible(true);
-        }
+           }
 
-        Message.setText("");
+             Message.setText("");
 
-        if(event.getSource() == DeleteBtn){
+         if(event.getSource() == DeleteBtn){
             if(!ShapeList.getSelectionModel().isEmpty()){
                 int index = ShapeList.getSelectionModel().getSelectedIndex();
                 removeShape(manager.getShapes().get(index));
@@ -159,6 +185,84 @@ public class FXMLDocumentController implements Initializable, DrawingEngine {
             else if(importt){ importt = false; installPluginShape(PathText.getText()); }
             hidePathPane();
         }
+
+
+ // **Composite Design Pattern support**
+     if (event.getSource() == GroupBtn) {
+     var selectedItems = ShapeList.getSelectionModel().getSelectedIndices();
+
+     if (selectedItems.isEmpty() || selectedItems.size() < 2) {
+        Message.setText("Please select at least two shapes to group.");
+        return;
+      }
+
+ //create new groups
+    ShapeGroup group = new ShapeGroup("Group_" + (manager.getShapes().size() + 1));
+
+    ArrayList<Shape> toRemove = new ArrayList<>();
+    for (Object indexObj : selectedItems) {
+        int index = (int) indexObj;
+        Shape s = manager.getShapes().get(index);
+        group.addShape(s);
+        toRemove.add(s);
+    }
+
+    //remove single shapes
+    for (Shape s : toRemove) {
+        manager.removeShape(s);
+    }
+
+    //add the group
+    manager.addShape(group);
+    Message.setText("Shapes grouped successfully!");
+    refresh(CanvasBox);
+}
+
+
+    // group recolorBtn:
+    if(event.getSource() == RecolorBtn){
+    if(!ShapeList.getSelectionModel().isEmpty()){
+        int index = ShapeList.getSelectionModel().getSelectedIndex();
+        Shape selectedShape = manager.getShapes().get(index);
+        selectedShape.setFillColor(ColorBox.getValue());
+        refresh(CanvasBox);
+    } else {
+        Message.setText("You need to pick a shape first to recolor it.");
+    }
+}
+if(event.getSource() == UngroupBtn){
+    if(!ShapeList.getSelectionModel().isEmpty()){
+        int index = ShapeList.getSelectionModel().getSelectedIndex();
+        Shape selectedShape = manager.getShapes().get(index);
+        
+        if(isShapeGroup(selectedShape)){
+            ShapeGroup group = getShapeGroup(selectedShape);
+            
+
+            //save shapes, before ungroup
+            ArrayList<Shape> shapesToAdd = new ArrayList<>();
+            for(Shape shape : group.getChildren()){
+                shapesToAdd.add(shape);
+            }
+            
+            //ungroup
+            manager.removeShape(group);
+            
+            //add the single shapes
+            for(Shape shape : shapesToAdd){
+                manager.addShape(shape);
+            }
+            
+            Message.setText("Group ungrouped successfully!");
+            refresh(CanvasBox);
+        } else {
+            Message.setText("Selected shape is not a group.");
+        }
+    } else {
+        Message.setText("Please select a group to ungroup.");
+    }
+}
+
     }
 
     public void showPathPane(){
@@ -186,37 +290,76 @@ public class FXMLDocumentController implements Initializable, DrawingEngine {
         else if(copy){ copy = false; copyFunction(); }
         else if(resize){ resize = false; resizeFunction(); }
     }
-
-    public void moveFunction(){
-        int index = ShapeList.getSelectionModel().getSelectedIndex();
-        manager.getShapes().get(index).setTopLeft(start);
-        refresh(CanvasBox);
-    }
-
-    public void copyFunction() throws CloneNotSupportedException{
-        int index = ShapeList.getSelectionModel().getSelectedIndex();
-        Shape temp = manager.getShapes().get(index).cloneShape();
-        if(temp == null){ System.out.println("Error cloning failed!"); }
-        else {
-            manager.addShape(temp);
-            manager.getShapes().get(manager.getShapes().size() - 1).setTopLeft(start);
-            refresh(CanvasBox);
+public void moveFunction(){
+    int index = ShapeList.getSelectionModel().getSelectedIndex();
+    Shape selectedShape = manager.getShapes().get(index);
+    
+    if (isShapeGroup(selectedShape)) {
+        ShapeGroup group = getShapeGroup(selectedShape);
+        // calculate the displacment 
+        Point2D currentTopLeft = group.getTopLeft();
+        double deltaX = start.getX() - currentTopLeft.getX();
+        double deltaY = start.getY() - currentTopLeft.getY();
+        
+        //move each single shape in the group
+        for (Shape shape : group.getChildren()) {
+            Point2D shapePos = shape.getTopLeft();
+            shape.setTopLeft(new Point2D(shapePos.getX() + deltaX, shapePos.getY() + deltaY));
         }
+        group.setTopLeft(start);
+    } else {
+        selectedShape.setTopLeft(start);
     }
+    refresh(CanvasBox);
+}
 
-    public void resizeFunction(){
-        int index = ShapeList.getSelectionModel().getSelectedIndex();
-        Color c = manager.getShapes().get(index).getFillColor();
-        start = manager.getShapes().get(index).getTopLeft();
-
-        Shape temp = new ShapeFactory().createShape(manager.getShapes().get(index).getClass().getSimpleName(), start, end, ColorBox.getValue());
-        if(temp.getClass().getSimpleName().equals("Line")){ Message.setText("Line doesn't support this command. Sorry :("); return; }
-
-        manager.removeShape(manager.getShapes().get(index));
-        temp.setFillColor(c);
+public void copyFunction() throws CloneNotSupportedException{
+    int index = ShapeList.getSelectionModel().getSelectedIndex();
+    Shape selectedShape = manager.getShapes().get(index);
+    Shape temp = selectedShape.cloneShape();
+    
+    if(temp == null){ 
+        System.out.println("Error cloning failed!"); 
+    } else {
         manager.addShape(temp);
+        
+        if (isShapeGroup(temp)) {
+            ShapeGroup group = getShapeGroup(temp);
+            group.setTopLeft(start);
+            // update the name in the side list, after grouping
+            group.setName(group.getName() + "_Copy");
+        } else {
+            temp.setTopLeft(start);
+        }
         refresh(CanvasBox);
     }
+}
+
+public void resizeFunction(){
+    int index = ShapeList.getSelectionModel().getSelectedIndex();
+    Shape selectedShape = manager.getShapes().get(index);
+    
+
+    //prevent resizing the group
+    if (isShapeGroup(selectedShape)) {
+        Message.setText("Cannot resize a group. Please ungroup first.");
+        return;
+    }
+    
+    Color c = selectedShape.getFillColor();
+    start = selectedShape.getTopLeft();
+
+    Shape temp = new ShapeFactory().createShape(selectedShape.getClass().getSimpleName(), start, end, ColorBox.getValue());
+    if(temp.getClass().getSimpleName().equals("Line")){ 
+        Message.setText("Line doesn't support this command. Sorry :("); 
+        return; 
+    }
+
+    manager.removeShape(selectedShape);
+    temp.setFillColor(c);
+    manager.addShape(temp);
+    refresh(CanvasBox);
+}
 
     public void dragFunction() throws CloneNotSupportedException{
         String type = ShapeBox.getValue();
@@ -230,18 +373,27 @@ public class FXMLDocumentController implements Initializable, DrawingEngine {
         addShape(sh);
         sh.draw(CanvasBox);
     }
-
-    // Observer DP
-    public ObservableList getStringList(){
-        ObservableList l = FXCollections.observableArrayList();
-        for(int i = 0; i < manager.getShapes().size(); i++){
-            String temp = manager.getShapes().get(i).getClass().getSimpleName() + "  (" +
-                          (int) manager.getShapes().get(i).getTopLeft().getX() + "," +
-                          (int) manager.getShapes().get(i).getTopLeft().getY() + ")";
+        
+// **Composite Design Pattern support**
+   public ObservableList getStringList(){
+    ObservableList l = FXCollections.observableArrayList();
+    for(int i = 0; i < manager.getShapes().size(); i++){
+        Shape shape = manager.getShapes().get(i);
+        if(shape instanceof ShapeGroup){
+            ShapeGroup group = (ShapeGroup) shape;
+            String temp = "Group (" + group.getChildren().size() + " shapes)  (" +
+                         (int) shape.getTopLeft().getX() + "," +
+                         (int) shape.getTopLeft().getY() + ")";
+            l.add(temp);
+        } else {
+            String temp = shape.getClass().getSimpleName() + "  (" +
+                         (int) shape.getTopLeft().getX() + "," +
+                         (int) shape.getTopLeft().getY() + ")";
             l.add(temp);
         }
-        return l;
     }
+    return l;
+}
 
     public ArrayList<Shape> cloneList(List<Shape> l) throws CloneNotSupportedException{
         ArrayList<Shape> temp = new ArrayList<>();
@@ -257,8 +409,97 @@ public class FXMLDocumentController implements Initializable, DrawingEngine {
         ShapeBox.setItems(shapeList);
         ColorBox.setValue(Color.BLACK);
         canvasManager.setCanvas(CanvasBox);
+
+        // **Composite Design Pattern support**
+         ShapeList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+         // **Pen Adapter setup**
+         setupPenTool();
     }
 
+    //** Pen Tool Adapter Setup**
+    private void setupPenTool() {
+    
+    //loading the external system via the host "webview"
+     PenWebView.getEngine().load(
+        getClass().getResource("/paint/ExternalSystem/index.html").toExternalForm()
+     );
+     PenWebView.setVisible(false);
+     PenWebView.setMouseTransparent(true); 
+     PenWebView.getEngine().getLoadWorker().stateProperty().addListener((obs, old, state) -> {
+        if (state == javafx.concurrent.Worker.State.SUCCEEDED) {
+
+            // Create adapter obj using the loaded WebView
+            pen = new PenAdapter(PenWebView);
+
+            // bined with UI values (from silders & colorbox):
+            pen.setPenSize(PenSizeSlider.getValue());
+            pen.setEraserSize(EraserSizeSlider.getValue());
+            pen.setColor(ColorBox.getValue());
+
+            // Sliders & color UI Elements bindings:
+            PenSizeSlider.valueProperty().addListener((o, ov, nv) -> pen.setPenSize(nv.doubleValue()));
+            EraserSizeSlider.valueProperty().addListener((o, ov, nv) -> pen.setEraserSize(nv.doubleValue()));
+            ColorBox.valueProperty().addListener((o, ov, nv) -> pen.setColor(nv));
+
+            // Pen button:
+                UsePenBtn.setOnAction(e -> {
+                penMode = true;
+                //pen mode =on
+                pen.usePen();
+                // show web pen layer and let it receive mouse events
+                PenWebView.setVisible(true);
+                PenWebView.setMouseTransparent(false);
+                // put WebView on top the shape canva
+                PenWebView.toFront();
+                Message.setText("Pen mode: draw freely.");
+            });
+
+            //Eraser button:
+            UseEraserBtn.setOnAction(e -> {
+                penMode = true;
+                //Eraset mode =on
+                pen.useEraser();
+                PenWebView.setVisible(true);
+                PenWebView.setMouseTransparent(false);
+                PenWebView.toFront();
+                Message.setText("Eraser mode.");
+            });
+
+            // When switching to shapes mode, hide web pen layer and pass events to canvas
+            ShapeBox.setOnAction(e -> {
+                penMode = false;
+                //hide the webview layer
+                PenWebView.setVisible(false);
+                PenWebView.setMouseTransparent(true);
+                //place the shape canva on top , drawing shapes 
+                CanvasBox.toFront();
+                CanvasBox.requestFocus();
+                CanvasBox.setCursor(javafx.scene.Cursor.CROSSHAIR);
+                Message.setText("Drag to draw: " + ShapeBox.getValue());
+            });
+
+        }
+    });
+
+    //These event handlers control for the CanvasBox layer
+    //prevent canvabox ineraction when the  pen is active
+
+       CanvasBox.setOnMousePressed(e -> {
+        if (penMode) return;  
+        startDrag(e);
+    });
+
+        CanvasBox.setOnMouseDragged(e -> {
+        if (penMode) return;  
+    });
+
+         CanvasBox.setOnMouseReleased(e -> {
+        if (penMode) return;  
+            try { endDrag(e); } catch (CloneNotSupportedException ex) { ex.printStackTrace(); }
+
+    });
+}
     // ================== CORE METHODS ===================
     @Override
     public void refresh(Object canvas) { refresh(canvas, true); }
