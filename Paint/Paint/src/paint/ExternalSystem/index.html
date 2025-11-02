@@ -1,0 +1,123 @@
+<!--
+    External System
+    Web Pen Tool--> 
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Tool Box</title>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            header {
+                height: 15vh;
+                display: none;
+                justify-content: space-evenly;
+                align-items: center;
+                background-color: #ddd;
+                flex-wrap: wrap;
+            }
+            #pen,
+            #erase,
+            #clear {
+                background-color: azure;
+                padding: 7px 20px;
+                border-radius: 7px;
+                box-shadow: 1px 1px 2px 1px #000;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div id="pen">Draw</div>
+            <input type="color" name="color" id="color" />
+            <input type="number" name="lineWidth" id="lineWidth" />
+            <div id="erase">erase</div>
+            <div id="clear">clear</div>
+        </header>
+        <section id="myCanvas_parent">
+            <canvas id="myCanvas"></canvas>
+        </section>
+    </body>
+
+    <script>
+        let pen = document.getElementById("pen");
+        let colorObj = document.getElementById("color");
+        let lineWidthObj = document.getElementById("lineWidth");
+        let erase = document.getElementById("erase");
+        let clear = document.getElementById("clear");
+        let canvas = document.getElementById("myCanvas");
+        let myCanvas_parent = document.getElementById("myCanvas_parent");
+
+        let ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth - canvas.offsetLeft;
+        canvas.height = window.innerHeight - canvas.offsetTop;
+        canvas.style.border = "5px solid #ddd";
+        canvas.style.width = "100%";
+
+        let eraseSize = 20;
+        let isDrawing = false;
+        let orderDrawing = false;
+        let isErasing = false;
+        let orderErasing = false;
+        pen.addEventListener("click", () => {
+            orderDrawing = true;
+            orderErasing = false;
+        });
+        erase.addEventListener("click", () => {
+            orderDrawing = false;
+            orderErasing = true;
+        });
+        clear.addEventListener("click", () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+
+        canvas.addEventListener("mousedown", () => {
+            if (orderDrawing) {
+                isDrawing = true;
+            }
+            if (orderErasing) {
+                isErasing = true;
+            }
+        });
+
+        canvas.addEventListener("mouseup", () => {
+            isDrawing = false;
+            isErasing = false;
+            ctx.beginPath();
+        });
+
+        canvas.addEventListener("mousemove", (e) => {
+            if (orderDrawing && isDrawing) {
+                let lineWidth = lineWidthObj.value;
+                let color = colorObj.value;
+
+                ctx.lineWidth = lineWidth;
+                ctx.strokeStyle = color;
+                ctx.lineTo(
+                    e.clientX - canvas.offsetLeft,
+                    e.clientY - canvas.offsetTop
+                );
+                ctx.stroke();
+            }
+
+            if (orderErasing && isErasing) {
+                ctx.clearRect(
+                    e.clientX - canvas.offsetLeft,
+                    e.clientY - canvas.offsetTop,
+                    eraseSize,
+                    eraseSize
+                );
+            }
+        });
+    </script>
+</html>
