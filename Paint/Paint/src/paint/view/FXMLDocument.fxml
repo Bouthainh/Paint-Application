@@ -10,8 +10,10 @@
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.web.*?>
 
-<AnchorPane id="AnchorPane" maxHeight="500.0" maxWidth="1000.0" minHeight="500.0" minWidth="1000.0" prefHeight="500.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="paint.controller.FXMLDocumentController">
+
+<AnchorPane id="AnchorPane" maxHeight="700.0" maxWidth="1200.0" minHeight="700.0" minWidth="1200.0" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="paint.controller.FXMLDocumentController">
    <children>
       <Pane fx:id="Before" maxHeight="500.0" maxWidth="1000.0" minHeight="500.0" minWidth="1000.0" prefHeight="500.0" prefWidth="1000.0" style="-fx-background-color: #e9e9e9;">
          <children>
@@ -33,7 +35,8 @@
                   <Font name="DejaVu Sans ExtraLight" size="40.0" />
                </font>
             </Label>
-         </children></Pane>
+         </children>
+      </Pane>
       <GridPane fx:id="After" maxHeight="500.0" maxWidth="1000.0" minHeight="500.0" minWidth="1000.0" prefHeight="500.0" prefWidth="1000.0" visible="false">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -46,32 +49,42 @@
          <children>
             <HBox alignment="CENTER" maxHeight="50.0" maxWidth="1000.0" minHeight="50.0" minWidth="1000.0" prefHeight="50.0" prefWidth="1000.0">
                <children>
-                  <ComboBox fx:id="ShapeBox" maxHeight="50.0" maxWidth="165.67" minHeight="50.0" minWidth="165.67" nodeOrientation="LEFT_TO_RIGHT" prefHeight="50.0" prefWidth="165.67" promptText="Shape" style="-fx-background-radius: 0px; -fx-background-color: fcff99;">
+                  <ComboBox fx:id="ShapeBox" maxHeight="50.0" maxWidth="125.0" minHeight="50.0" minWidth="125.0" prefHeight="50.0" prefWidth="125.0" promptText="Shape" style="-fx-background-radius: 0px; -fx-background-color: fcff99;">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </ComboBox>
-                  <ColorPicker fx:id="ColorBox" maxHeight="50.0" maxWidth="166.67" minHeight="50.0" minWidth="166.67" nodeOrientation="LEFT_TO_RIGHT" prefHeight="50.0" prefWidth="166.67" promptText="Color" style="-fx-background-radius: 0px; -fx-background-color: lightgreen;">
+                  <ColorPicker fx:id="ColorBox" maxHeight="50.0" maxWidth="125.0" minHeight="50.0" minWidth="125.0" prefHeight="50.0" prefWidth="125.0" promptText="Color" style="-fx-background-radius: 0px; -fx-background-color: lightgreen;">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </ColorPicker>
-                  <Button fx:id="RecolorBtn" contentDisplay="CENTER" maxHeight="50.0" maxWidth="166.67" minHeight="50.0" minWidth="166.67" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="166.67" style="-fx-background-radius: 0px; -fx-background-color: lightpink;" styleClass="btns" text="Recolor">
+                  <Button fx:id="RecolorBtn" maxHeight="50.0" maxWidth="125.0" minHeight="50.0" minWidth="125.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="125.0" style="-fx-background-radius: 0px; -fx-background-color: lightpink;" text="Recolor">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="MoveBtn" contentDisplay="CENTER" maxHeight="50.0" maxWidth="166.67" minHeight="50.0" minWidth="166.67" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="166.67" style="-fx-background-radius: 0px; -fx-background-color: lightblue;" styleClass="btns" text="Move">
+                  <Button fx:id="MoveBtn" maxHeight="50.0" maxWidth="125.0" minHeight="50.0" minWidth="125.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="125.0" style="-fx-background-radius: 0px; -fx-background-color: lightblue;" text="Move">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="CopyBtn" contentDisplay="CENTER" maxHeight="50.0" maxWidth="166.67" minHeight="50.0" minWidth="166.67" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="166.67" style="-fx-background-radius: 0px; -fx-background-color: FED18C;" styleClass="btns" text="Copy">
+                  <Button fx:id="CopyBtn" maxHeight="50.0" maxWidth="125.0" minHeight="50.0" minWidth="125.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="125.0" style="-fx-background-radius: 0px; -fx-background-color: #FED18C;" text="Copy">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="ResizeBtn" contentDisplay="CENTER" maxHeight="50.0" maxWidth="165.67" minHeight="50.0" minWidth="165.67" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="165.67" style="-fx-background-color: #e4b9d2; -fx-background-radius: 0px;" styleClass="btns" text="Resize">
+                  <Button fx:id="ResizeBtn" maxHeight="50.0" maxWidth="125.0" minHeight="50.0" minWidth="125.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="125.0" style="-fx-background-color: #e4b9d2; -fx-background-radius: 0px;" text="Resize">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+                  <Button fx:id="GroupBtn" maxHeight="50.0" maxWidth="125.0" minHeight="50.0" minWidth="125.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="125.0" style="-fx-background-radius: 0px; -fx-background-color: #d1b3ff;" text="Group">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+                  <Button fx:id="UngroupBtn" maxHeight="50.0" maxWidth="125.0" minHeight="50.0" minWidth="125.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="125.0" style="-fx-background-radius: 0px; -fx-background-color: #e6ccff;" text="Ungroup">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
@@ -80,36 +93,54 @@
             </HBox>
             <HBox alignment="CENTER" maxHeight="50.0" maxWidth="1000.0" minHeight="50.0" minWidth="1000.0" prefHeight="50.0" prefWidth="1000.0" GridPane.rowIndex="2">
                <children>
-                  <Button fx:id="LoadBtn" maxHeight="50.0" maxWidth="166.67" minHeight="50.0" minWidth="166.67" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="166.67" style="-fx-background-radius: 0px; -fx-background-color: #fcff99;" styleClass="btns" text="Load">
+                  <Button fx:id="LoadBtn" maxHeight="50.0" maxWidth="150.0" minHeight="50.0" minWidth="150.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="150.0" style="-fx-background-radius: 0px; -fx-background-color: #fcff99;" styleClass="btns" text="Load 📂">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="SaveBtn" maxHeight="50.0" maxWidth="166.67" minHeight="50.0" minWidth="166.67" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="166.67" style="-fx-background-radius: 0px; -fx-background-color: lightgreen;" styleClass="btns" text="Save">
+                  <Button fx:id="SaveBtn" maxHeight="50.0" maxWidth="150.0" minHeight="50.0" minWidth="150.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="150.0" style="-fx-background-radius: 0px; -fx-background-color: lightgreen;" styleClass="btns" text="Save 💾">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="DeleteBtn" contentDisplay="CENTER" maxHeight="50.0" maxWidth="166.67" minHeight="50.0" minWidth="166.67" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="166.67" style="-fx-background-radius: 0px; -fx-background-color: lightpink;" styleClass="btns" text="Delete">
+                  <Button fx:id="DeleteBtn" contentDisplay="CENTER" maxHeight="50.0" maxWidth="150.0" minHeight="50.0" minWidth="150.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="150.0" style="-fx-background-radius: 0px; -fx-background-color: lightpink;" styleClass="btns" text="Delete">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="UndoBtn" contentDisplay="CENTER" maxHeight="50.0" maxWidth="166.67" minHeight="50.0" minWidth="166.67" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="166.67" style="-fx-background-radius: 0px; -fx-background-color: lightblue;" styleClass="btns" text="Undo">
+                  <MenuButton text="Pen" fx:id="PenMenu" maxHeight="50.0" prefWidth="150.0"  prefHeight="50.0" maxWidth="150.0" style="-fx-background-color:#d1b3ff;">
+                   <items>
+                 <CustomMenuItem hideOnClick="false">
+                  <content>
+                  <VBox spacing="8" style="-fx-padding: 10; -fx-min-width:150;">
+                    <Label text="Pen Size:" />
+                    <Slider fx:id="PenSizeSlider" min="1" max="50" value="5"/>
+
+                    <Label text="Eraser Size:" />
+                    <Slider fx:id="EraserSizeSlider" min="5" max="80" value="20"/>
+
+                    <Button fx:id="UsePenBtn" text="Pen Mode" style="-fx-background-color: lightblue;"/>
+                    <Button fx:id="UseEraserBtn" text="Eraser Mode" style="-fx-background-color: lightcoral;"/> 
+                </VBox>
+                </content>
+              </CustomMenuItem>
+                </items>
+               </MenuButton>      
+                  <Button fx:id="UndoBtn" contentDisplay="CENTER" maxHeight="50.0" maxWidth="150.0" minHeight="50.0" minWidth="150.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="150.0" style="-fx-background-radius: 0px; -fx-background-color: lightblue;" styleClass="btns" text="Undo ↩️">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="RedoBtn" contentDisplay="CENTER" maxHeight="50.0" maxWidth="166.67" minHeight="50.0" minWidth="166.67" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="166.67" style="-fx-background-radius: 0px; -fx-background-color: #FED18C;" styleClass="btns" text="Redo">
+                  <Button fx:id="RedoBtn" contentDisplay="CENTER" maxHeight="50.0" maxWidth="150.0" minHeight="50.0" minWidth="150.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="150.0" style="-fx-background-radius: 0px; -fx-background-color: #FED18C;" styleClass="btns" text="Redo ↪️">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="ImportBtn" contentDisplay="CENTER" maxHeight="50.0" maxWidth="165.67" minHeight="50.0" minWidth="165.67" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="165.67" style="-fx-background-color: #e4b9d2; -fx-background-radius: 0px;" styleClass="btns" text="Import">
+                  <Button fx:id="ImportBtn" contentDisplay="CENTER" maxHeight="50.0" maxWidth="150.0" minHeight="50.0" minWidth="150.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: #e4b9d2; -fx-background-radius: 0px;" styleClass="btns" text="Import ⬇️">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
-                  </Button>
+                  </Button>          
                </children>
             </HBox>
             <GridPane maxHeight="400.0" maxWidth="1000.0" minHeight="400.0" minWidth="1000.0" prefHeight="400.0" prefWidth="1000.0" GridPane.rowIndex="1">
@@ -140,11 +171,14 @@
                               <Font name="Monospaced Regular" size="15.0" />
                            </font>
                         </Label>
-                        <Canvas fx:id="CanvasBox" height="370.0" onMousePressed="#startDrag" onMouseReleased="#endDrag" width="833.33" GridPane.rowIndex="1">
+                        <StackPane GridPane.rowIndex="1" prefWidth="833.33" prefHeight="370">
+                           <Canvas fx:id="CanvasBox" height="370.0" width="833.33" >
                            <cursor>
                               <Cursor fx:constant="CROSSHAIR" />
                            </cursor>
                         </Canvas>
+                        <WebView fx:id="PenWebView" visible="false" mouseTransparent="true" />
+                        </StackPane>
                         <Pane fx:id="PathPane" maxHeight="30.0" maxWidth="833.33" minHeight="30.0" minWidth="833.33" prefHeight="30.0" prefWidth="833.33" visible="false">
                            <children>
                               <TextField fx:id="PathText" alignment="CENTER" layoutX="1.0" layoutY="2.0" maxHeight="30.0" maxWidth="666.66" minHeight="30.0" minWidth="666.66" prefHeight="30.0" prefWidth="666.66" promptText="Enter path of the file here..." style="-fx-background-radius: 0px; -fx-background-color: white;" />
