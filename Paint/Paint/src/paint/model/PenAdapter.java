@@ -1,6 +1,5 @@
 package paint.model;
 
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -15,19 +14,6 @@ public class PenAdapter implements iPenDrawing {
         this.engine = webView.getEngine(); //initialize the WebEngine from the provided WebView
     }
 
-    // the start drawing action mousedown in JS
-    @Override
-    public void startDrawing(MouseEvent e) {
-    }
-
-    @Override
-    public void draw(MouseEvent e) {
-    }
-
-    // the stop drawing action mouseup in JS
-    @Override
-    public void stopDrawing(MouseEvent e) {
-    }
 
     //Pen size is set (slider) ==> directly modifying the lineWidth variable in JS
     @Override
