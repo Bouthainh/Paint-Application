@@ -26,7 +26,7 @@ import paint.model.*;
 import javafx.scene.web.WebView; //Adapter: import WebView bridge
 
 
-public class FXMLDocumentController implements Initializable, DrawingEngine {
+public class FXMLDocumentController implements Initializable, DrawingEngine, iModeObserver {
 
     /*** FXML VARIABLES ***/
     @FXML private Button DeleteBtn;
@@ -70,6 +70,10 @@ public class FXMLDocumentController implements Initializable, DrawingEngine {
     private Point2D end;
     private ShapeManager manager = ShapeManager.getInstance();
     private CanvasManager canvasManager = CanvasManager.getInstance();
+
+    //Observer Pattern: Mode Manager
+    private ModeManager modeManager = new ModeManager();
+
     // Action flags
     private boolean move = false;
     private boolean copy = false;
@@ -415,6 +419,10 @@ public void resizeFunction(){
 
          // **Pen Adapter setup**
          setupPenTool();
+
+         // **Observer Pattern: register as observer**
+         modeManager.addObserver(this);
+
     }
 
     //** Pen Tool Adapter Setup**
@@ -443,44 +451,23 @@ public void resizeFunction(){
             ColorBox.valueProperty().addListener((o, ov, nv) -> pen.setColor(nv));
 
             // Pen button:
-                UsePenBtn.setOnAction(e -> {
-                penMode = true;
-                //pen mode =on
-                pen.usePen();
-                // show web pen layer and let it receive mouse events
-                PenWebView.setVisible(true);
-                PenWebView.setMouseTransparent(false);
-                // put WebView on top the shape canva
-                PenWebView.toFront();
-                Message.setText("Pen mode: draw freely.");
-            });
+       UsePenBtn.setOnAction(e -> {
+       pen.usePen();
+       modeManager.setMode(DrawingModeEnum.PEN);
+     });
+       // Eraser button:
+       UseEraserBtn.setOnAction(e -> {
+       pen.useEraser();
+      modeManager.setMode(DrawingModeEnum.ERASER);
+     });
 
-            //Eraser button:
-            UseEraserBtn.setOnAction(e -> {
-                penMode = true;
-                //Eraset mode =on
-                pen.useEraser();
-                PenWebView.setVisible(true);
-                PenWebView.setMouseTransparent(false);
-                PenWebView.toFront();
-                Message.setText("Eraser mode.");
-            });
-
-            // When switching to shapes mode, hide web pen layer and pass events to canvas
-            ShapeBox.setOnAction(e -> {
-                penMode = false;
-                //hide the webview layer
-                PenWebView.setVisible(false);
-                PenWebView.setMouseTransparent(true);
-                //place the shape canva on top , drawing shapes 
-                CanvasBox.toFront();
-                CanvasBox.requestFocus();
-                CanvasBox.setCursor(javafx.scene.Cursor.CROSSHAIR);
-                Message.setText("Drag to draw: " + ShapeBox.getValue());
-            });
-
+      // Shape mode selection from ComboBox:
+      ShapeBox.setOnAction(e -> {
+      modeManager.setMode(DrawingModeEnum.SHAPE);
+      });
         }
     });
+
 
     //These event handlers control for the CanvasBox layer
     //prevent canvabox ineraction when the  pen is active
@@ -500,6 +487,46 @@ public void resizeFunction(){
 
     });
 }
+
+    // **Observer Pattern: update mode on change**
+    @Override
+    public void onModeUpdate(DrawingModeEnum newMode) {
+
+    switch (newMode) {
+
+        case PEN:
+            penMode = true;
+            PenWebView.setVisible(true);
+            PenWebView.setMouseTransparent(false);
+            PenWebView.toFront();
+            Message.setText("Pen mode: draw freely.");
+            System.out.println("ModeObserver: Pen mode activated");
+            break;
+
+        case ERASER:
+            penMode = true;
+            PenWebView.setVisible(true);
+            PenWebView.setMouseTransparent(false);
+            PenWebView.toFront();
+            Message.setText("Eraser mode.");
+            System.out.println("ModeObserver: Eraser mode activated");
+            break;
+
+        case SHAPE:
+            penMode = false;
+            PenWebView.setVisible(false);
+            PenWebView.setMouseTransparent(true);
+            CanvasBox.toFront();
+            CanvasBox.requestFocus();
+            System.out.println("ModeObserver: Shape mode activated");
+            CanvasBox.setCursor(javafx.scene.Cursor.CROSSHAIR);
+            Message.setText("Shape mode: " + ShapeBox.getValue());
+            break;
+    }
+}
+
+
+
     // ================== CORE METHODS ===================
     @Override
     public void refresh(Object canvas) { refresh(canvas, true); }
