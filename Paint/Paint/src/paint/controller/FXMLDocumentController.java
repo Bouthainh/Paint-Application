@@ -24,6 +24,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 import paint.model.*;
 import javafx.scene.web.WebView; //Adapter: import WebView bridge
+import paint.model.commands.*;   // Command Pattern
+
 
 
 public class FXMLDocumentController implements Initializable, DrawingEngine, iModeObserver {
@@ -86,6 +88,8 @@ public class FXMLDocumentController implements Initializable, DrawingEngine, iMo
     private Stack<ArrayList<Shape>> primary = new Stack<>();
     private Stack<ArrayList<Shape>> secondary = new Stack<>();
 
+    // Command Pattern Manager
+    private CommandManager commandManager = CommandManager.getInstance();
 
     // **Helper Methods for Composite Pattern**
       private boolean isShapeGroup(Shape shape) {
@@ -108,7 +112,10 @@ public class FXMLDocumentController implements Initializable, DrawingEngine, iMo
          if(event.getSource() == DeleteBtn){
             if(!ShapeList.getSelectionModel().isEmpty()){
                 int index = ShapeList.getSelectionModel().getSelectedIndex();
-                removeShape(manager.getShapes().get(index));
+                Shape target = manager.getShapes().get(index);
+                commandManager.executeCommand(new DeleteShapeCommand(manager, target));
+                refresh(CanvasBox);
+
             } else {
                 Message.setText("You need to pick a shape first to delete it.");
             }
@@ -117,8 +124,13 @@ public class FXMLDocumentController implements Initializable, DrawingEngine, iMo
         if(event.getSource() == RecolorBtn){
             if(!ShapeList.getSelectionModel().isEmpty()){
                 int index = ShapeList.getSelectionModel().getSelectedIndex();
-                manager.getShapes().get(index).setFillColor(ColorBox.getValue());
-                refresh(CanvasBox);
+Shape s = manager.getShapes().get(index);
+Color oldColor = s.getFillColor();
+Color newColor = ColorBox.getValue();
+
+commandManager.executeCommand(new RecolorCommand(s, oldColor, newColor));
+refresh(CanvasBox);
+
             } else {
                 Message.setText("You need to pick a shape first to recolor it.");
             }
@@ -156,7 +168,8 @@ public class FXMLDocumentController implements Initializable, DrawingEngine, iMo
                 Message.setText("We are back to zero point! .. Can Undo nothing more!");
                 return;
             }
-            undo();
+commandManager.undo();
+refresh(CanvasBox);
         }
 
         if(event.getSource() == RedoBtn){
@@ -164,7 +177,8 @@ public class FXMLDocumentController implements Initializable, DrawingEngine, iMo
                 Message.setText("There is no more history for me to get .. Go search history books.");
                 return;
             }
-            redo();
+commandManager.redo();
+refresh(CanvasBox);
         }
 
         if(event.getSource() == SaveBtn){
@@ -295,26 +309,8 @@ if(event.getSource() == UngroupBtn){
         else if(resize){ resize = false; resizeFunction(); }
     }
 public void moveFunction(){
-    int index = ShapeList.getSelectionModel().getSelectedIndex();
-    Shape selectedShape = manager.getShapes().get(index);
-    
-    if (isShapeGroup(selectedShape)) {
-        ShapeGroup group = getShapeGroup(selectedShape);
-        // calculate the displacment 
-        Point2D currentTopLeft = group.getTopLeft();
-        double deltaX = start.getX() - currentTopLeft.getX();
-        double deltaY = start.getY() - currentTopLeft.getY();
-        
-        //move each single shape in the group
-        for (Shape shape : group.getChildren()) {
-            Point2D shapePos = shape.getTopLeft();
-            shape.setTopLeft(new Point2D(shapePos.getX() + deltaX, shapePos.getY() + deltaY));
-        }
-        group.setTopLeft(start);
-    } else {
-        selectedShape.setTopLeft(start);
-    }
-    refresh(CanvasBox);
+    executeMoveCommand();
+    return;
 }
 
 public void copyFunction() throws CloneNotSupportedException{
@@ -340,29 +336,9 @@ public void copyFunction() throws CloneNotSupportedException{
 }
 
 public void resizeFunction(){
-    int index = ShapeList.getSelectionModel().getSelectedIndex();
-    Shape selectedShape = manager.getShapes().get(index);
-    
+    executeResizeCommand();
+return;
 
-    //prevent resizing the group
-    if (isShapeGroup(selectedShape)) {
-        Message.setText("Cannot resize a group. Please ungroup first.");
-        return;
-    }
-    
-    Color c = selectedShape.getFillColor();
-    start = selectedShape.getTopLeft();
-
-    Shape temp = new ShapeFactory().createShape(selectedShape.getClass().getSimpleName(), start, end, ColorBox.getValue());
-    if(temp.getClass().getSimpleName().equals("Line")){ 
-        Message.setText("Line doesn't support this command. Sorry :("); 
-        return; 
-    }
-
-    manager.removeShape(selectedShape);
-    temp.setFillColor(c);
-    manager.addShape(temp);
-    refresh(CanvasBox);
 }
 
     public void dragFunction() throws CloneNotSupportedException{
@@ -631,4 +607,44 @@ public void resizeFunction(){
 
     @Override
     public void installPluginShape(String jarPath){ Message.setText("Not supported yet."); }
+
+    // Command Pattern MOVE
+private void executeMoveCommand() {
+
+    int index = ShapeList.getSelectionModel().getSelectedIndex();
+    Shape selected = manager.getShapes().get(index);
+    Point2D oldPos = selected.getTopLeft();
+
+    commandManager.executeCommand(
+        new MoveCommand(selected, oldPos, start)
+    );
+
+    refresh(CanvasBox);
+}
+
+private void executeResizeCommand(){
+
+    int index = ShapeList.getSelectionModel().getSelectedIndex();
+    Shape oldShape = manager.getShapes().get(index);
+
+    if (isShapeGroup(oldShape)) {
+        Message.setText("Cannot resize a group.");
+        return;
+    }
+
+    Shape newShape = new ShapeFactory().createShape(
+        oldShape.getClass().getSimpleName(),
+        oldShape.getTopLeft(),
+        end,
+        ColorBox.getValue()
+    );
+
+    commandManager.executeCommand(
+        new ResizeCommand(manager, oldShape, newShape)
+    );
+
+    refresh(CanvasBox);
+}
+
+
 }
