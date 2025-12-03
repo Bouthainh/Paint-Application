@@ -6,7 +6,7 @@ import java.util.List;
 public class ShapeManager {
 
     // Singleton instance
-    private static ShapeManager instance =null;
+    private static ShapeManager instance = null;
 
     // Store all shapes
     private List<Shape> shapeList;
@@ -41,9 +41,18 @@ public class ShapeManager {
         shapeList.clear();
     }
 
-    // Corrected setShapes for undo/redo
+    // For undo/redo
     public void setShapes(ArrayList<Shape> newShapes){
         shapeList.clear();
         shapeList.addAll(newShapes);
+    }
+
+    
+    // This method replaces an existing shape with a new one
+    public void updateShape(Shape oldShape, Shape newShape) {
+        int index = shapeList.indexOf(oldShape);
+        if (index != -1) {
+            shapeList.set(index, newShape);
+        }
     }
 }
