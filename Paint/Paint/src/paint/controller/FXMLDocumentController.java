@@ -52,7 +52,7 @@ public class FXMLDocumentController implements Initializable, DrawingEngine, iMo
 
     private ShapeManager manager = ShapeManager.getInstance();
     private CanvasManager canvasManager = CanvasManager.getInstance();
-    private ModeManager modeManager = new ModeManager();
+    private iModeManager modeManager = new ModeManager();
     private CommandManager commandManager = CommandManager.getInstance();
 
     private boolean move = false;
