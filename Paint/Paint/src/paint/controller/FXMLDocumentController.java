@@ -284,9 +284,10 @@ public class FXMLDocumentController implements Initializable, DrawingEngine, iMo
                 EraserSizeSlider.valueProperty().addListener((o, ov, nv) -> pen.setEraserSize(nv.doubleValue()));
                 ColorBox.valueProperty().addListener((o, ov, nv) -> pen.setColor(nv));
 
-                UsePenBtn.setOnAction(e -> { pen.usePen(); modeManager.setMode(DrawingModeEnum.PEN); });
-                UseEraserBtn.setOnAction(e -> { pen.useEraser(); modeManager.setMode(DrawingModeEnum.ERASER); });
-                ShapeBox.setOnAction(e -> modeManager.setMode(DrawingModeEnum.SHAPE));
+                UsePenBtn.setOnAction(e -> { pen.usePen(); modeManager.setMode(DrawingModeEnum.PEN); System.out.println("Pen mode activated"); });
+                UseEraserBtn.setOnAction(e -> { pen.useEraser(); modeManager.setMode(DrawingModeEnum.ERASER); System.out.println("Eraser mode activated");  });
+                ShapeBox.setOnAction(e -> {modeManager.setMode(DrawingModeEnum.SHAPE) ; System.out.println("Shape mode activated");});
+                
             }
         });
 
@@ -350,3 +351,5 @@ public class FXMLDocumentController implements Initializable, DrawingEngine, iMo
         updateShapeList(); //  تحديث القائمة بعد كل عملية
     }
 }
+
+
